@@ -13,7 +13,6 @@ var player_height: float = 1.8
 @export var arm_length: float = 0.5
 
 var ledge_position: Vector3 = Vector3.ZERO
-#var climbing_position: Vector3 = Vector3.ZERO
 var climb_speed: float = 400.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -21,6 +20,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_motion: Vector2
 
 var is_crouched: bool = false
+var allow_climb: bool = true
 
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var state_machine: PlayerStateMachine = %StateMachine
@@ -30,7 +30,6 @@ var is_crouched: bool = false
 @onready var bottom_raycast: RayCast3D = %BottomRaycast
 @onready var middle_raycast: RayCast3D = %MiddleRaycast
 @onready var top_raycast: RayCast3D = %TopRaycast
-
 
 @onready var surface_raycasts_root: Node3D = %SurfaceRaycasts
 @onready var projected_height_raycast: RayCast3D = %ProjectedHeightRaycast
