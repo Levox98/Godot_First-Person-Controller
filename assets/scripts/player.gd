@@ -1,7 +1,6 @@
 class_name Player extends CharacterBody3D
 
 ## TODO refactor !!!!!!!!!!!!!!!!!!!!!!
-## TODO fix climbing near wall edges
 
 @export var walk_back_speed: float = 3.0
 @export var walk_speed: float = 5.0
@@ -20,7 +19,13 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_motion: Vector2
 
 var is_crouched: bool = false
-var allow_climb: bool = true
+var can_climb: bool:
+	get: 
+		return can_climb
+	set(value):
+		can_climb = value
+		print(can_climb)
+var can_climb_timer: Timer
 
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var state_machine: PlayerStateMachine = %StateMachine
@@ -64,6 +69,11 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	
+	if is_on_floor() && !can_climb:
+		if can_climb_timer != null:
+			can_climb_timer.queue_free()
+		can_climb = true
+	
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_handle_camera_motion()
 	
@@ -71,7 +81,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_state_machine_transitioned(state: PlayerState) -> void:
-	print("Transitioned to: \"" + state.name + "\"")
+	#print("Transitioned to: \"" + state.name + "\"")
 	pass
 
 
@@ -130,3 +140,20 @@ func crouch() -> void:
 func stand_up() -> void:
 	animation_player.play_backwards("crouch")
 	is_crouched = false
+
+func setup_can_climb_timer(callback: Callable = _on_grab_available_timeout) -> void:
+	if can_climb_timer != null:
+		return
+	can_climb = false
+	
+	can_climb_timer = Timer.new()
+	add_child(can_climb_timer)
+	can_climb_timer.wait_time = 1.0
+	can_climb_timer.one_shot = true
+	can_climb_timer.connect("timeout", callback)
+	can_climb_timer.start()
+
+
+func _on_grab_available_timeout() -> void:
+	can_climb = true
+	can_climb_timer.queue_free()

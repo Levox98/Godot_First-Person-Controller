@@ -2,3 +2,7 @@ res://levels/sandbox.tscn
 res://assets/materials/material_basic_blue.tres
 res://characters/player.tscn
 res://assets/scripts/player.gd
+res://assets/scripts/player_move_state/fall.gd
+res://assets/scripts/player_move_state/idle.gd
+res://assets/scripts/player_move_state/grab.gd
+res://assets/scripts/player_move_state/climb.gd
