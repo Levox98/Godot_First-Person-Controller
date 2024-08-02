@@ -12,6 +12,7 @@ func enter(msg := {}) -> void:
 
 func handle_input(event: InputEvent) -> void:
 	if event.is_action_released("jump"):
+		player.setup_can_climb_timer()
 		state_machine.transition_to(state_machine.movement_state[state_machine.IDLE])
 
 
@@ -22,4 +23,3 @@ func physics_update(delta: float) -> void:
 	
 	if int(player.global_position.y * 10) in range(new_position.y * 10 - 1, new_position.y * 10):
 		state_machine.transition_to(state_machine.movement_state[state_machine.IDLE])
-	
