@@ -47,7 +47,6 @@ var can_climb_timer: Timer
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	#surface_raycasts_root.position.y += arm_length
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -65,12 +64,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	
-	# Resetting climb ability when 
+	# Resetting climb ability when on ground
 	if is_on_floor() && !can_climb:
 		if can_climb_timer != null:
 			can_climb_timer.queue_free()
