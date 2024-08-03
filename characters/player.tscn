@@ -8,7 +8,6 @@
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/walk.gd" id="5_bwgwe"]
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/sprint.gd" id="6_b4xrx"]
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/fall.gd" id="7_dv6ye"]
-[ext_resource type="Script" path="res://assets/scripts/player_move_state/crouch.gd" id="9_v3ske"]
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/climb.gd" id="10_o7gmx"]
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/grab.gd" id="11_gkc45"]
 [ext_resource type="Script" path="res://assets/scripts/slide.gd" id="12_bqyfq"]
@@ -88,6 +87,18 @@ tracks/5/keys = {
 "update": 0,
 "values": [Vector3(2.08165e-12, 1.5, 2.08165e-12)]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("CrouchRaycast:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.8, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_abp0t"]
 resource_name = "crouch"
@@ -164,6 +175,18 @@ tracks/5/keys = {
 "update": 0,
 "values": [Vector3(2.08165e-12, 1.5, 2.08165e-12), Vector3(2.08165e-12, 0.6, 2.08165e-12)]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("CrouchRaycast:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 1.8, 0), Vector3(0, 0.9, 0)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4kkkr"]
 _data = {
@@ -177,6 +200,14 @@ height = 1.8
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_aufvi"]
 height = 1.8
 
+[sub_resource type="GDScript" id="GDScript_ukybc"]
+script/source = "class_name Crouch extends PlayerState
+
+
+func enter(_msg := {}) -> void:
+	player.crouch()
+"
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_5ras8")
 walk_back_speed = 1.5
@@ -188,6 +219,11 @@ unique_name_in_owner = true
 libraries = {
 "": SubResource("AnimationLibrary_4kkkr")
 }
+
+[node name="CrouchRaycast" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+target_position = Vector3(0, 1, 0)
 
 [node name="RaycastClimbDetector" type="Node3D" parent="."]
 
@@ -208,28 +244,17 @@ target_position = Vector3(2.08165e-12, 2.08165e-12, -0.75)
 
 [node name="SurfaceRaycasts" type="Node3D" parent="RaycastClimbDetector"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 1.8, -0.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, -0.75)
 
 [node name="ProjectedHeightRaycast" type="RayCast3D" parent="RaycastClimbDetector/SurfaceRaycasts"]
 unique_name_in_owner = true
-target_position = Vector3(2.08165e-12, 1, 2.08165e-12)
+target_position = Vector3(0, 0.5, 0)
 hit_from_inside = true
 
 [node name="SurfaceRaycast" type="RayCast3D" parent="RaycastClimbDetector/SurfaceRaycasts"]
 unique_name_in_owner = true
 target_position = Vector3(2.08165e-12, -2.7, 2.08165e-12)
-
-[node name="SideSurfaceRaycastLeft" type="RayCast3D" parent="RaycastClimbDetector/SurfaceRaycasts"]
-unique_name_in_owner = true
-transform = Transform3D(0.965926, 0.258819, 3.48787e-16, -0.258819, 0.965926, -3.48787e-16, -4.27175e-16, 2.4663e-16, 1, -0.5, 0, 0)
-visible = false
-target_position = Vector3(2.08165e-12, -2.7, 2.08165e-12)
-
-[node name="SideSurfaceRaycastRight" type="RayCast3D" parent="RaycastClimbDetector/SurfaceRaycasts"]
-unique_name_in_owner = true
-transform = Transform3D(0.965926, -0.258819, 4.27175e-16, 0.258819, 0.965926, -2.4663e-16, -3.48787e-16, 3.48787e-16, 1, 0.5, 0, 0)
-visible = false
-target_position = Vector3(2.08165e-12, -2.7, 2.08165e-12)
+hit_from_inside = true
 
 [node name="ClimbableRaycasts" type="Node3D" parent="RaycastClimbDetector"]
 
@@ -281,7 +306,7 @@ script = ExtResource("6_b4xrx")
 script = ExtResource("7_dv6ye")
 
 [node name="Crouch" type="Node" parent="StateMachine"]
-script = ExtResource("9_v3ske")
+script = SubResource("GDScript_ukybc")
 
 [node name="Climb" type="Node" parent="StateMachine"]
 script = ExtResource("10_o7gmx")

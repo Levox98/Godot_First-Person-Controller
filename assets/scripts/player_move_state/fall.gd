@@ -24,9 +24,7 @@ func physics_update(_delta: float) -> void:
 		state_machine.transition_to(state_machine.movement_state[init_state])
 	
 	if Input.is_action_pressed("jump") && player.can_climb:
-		await get_tree().create_timer(0.05).timeout
 		if player.check_climbable():
-			## TODO: add cooldown on grabbing after releasing without climbing
 			state_machine.transition_to(
 				state_machine.movement_state[state_machine.GRAB],
 				{ "ledge_position" = player.ledge_position }

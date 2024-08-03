@@ -13,12 +13,14 @@ func enter(msg := {}) -> void:
 	
 	
 	if player.check_small_ledge():
+		player.set_climb_speed(true)
 		if player.can_climb:
 			state_machine.transition_to(
 				state_machine.movement_state[state_machine.CLIMB],
 				{ "ledge_position" = player.ledge_position }
 			)
 	else:
+		player.set_climb_speed(false)
 		_setup_timer(_on_grab_timer_timeout)
 		grab_timer.start()
 
