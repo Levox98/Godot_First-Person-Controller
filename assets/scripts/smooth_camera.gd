@@ -4,7 +4,7 @@ class_name SmoothCamera extends Camera3D
 
 
 func _physics_process(delta: float) -> void:
-	var weight = clamp(speed * delta, 0.0, 1.0)
+	var weight: float = clamp(speed * delta, 0.0, 1.0)
 	
 	global_transform = global_transform.interpolate_with(
 		get_parent().global_transform, weight

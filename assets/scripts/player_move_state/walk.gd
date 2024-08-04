@@ -39,7 +39,7 @@ func physics_update(_delta: float) -> void:
 		player.velocity.z = move_toward(player.velocity.z, 0, move_speed)
 		
 		state_machine.transition_to(state_machine.movement_state[state_machine.IDLE])
-		
+	
 	if player.velocity.y < 0:
 		state_machine.transition_to(
 			state_machine.movement_state[state_machine.FALL],

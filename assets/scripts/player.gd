@@ -1,6 +1,5 @@
 class_name Player extends CharacterBody3D
 
-
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 # Customizable player stats
@@ -43,6 +42,7 @@ var climb_speed: float = fast_climb_speed
 var is_crouched: bool = false
 var can_climb: bool
 var can_climb_timer: Timer
+var is_affected_by_gravity: bool = true
 
 
 func _ready() -> void:
@@ -65,7 +65,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
-	if not is_on_floor():
+	if not is_on_floor() && is_affected_by_gravity:
 		velocity.y -= gravity * delta
 	
 	# Resetting climb ability when on ground
@@ -77,7 +77,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-func _process(delta):
+func _process(_delta: float):
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		# Handling camera in '_process' so that camera movement is framerate independent
 		_handle_camera_motion()
@@ -120,7 +120,7 @@ func check_climbable() -> bool:
 
 
 func check_small_ledge() -> bool:
-	return bottom_raycast.is_colliding() && !middle_raycast.is_colliding() && !top_raycast.is_colliding()
+	return bottom_raycast.is_colliding() && not middle_raycast.is_colliding() && not top_raycast.is_colliding()
 
 
 func set_climb_speed(is_small_ledge) -> void:
@@ -168,5 +168,6 @@ func _on_grab_available_timeout() -> void:
 
 
 ## Triggers on every state transition. Could be useful for side effects and debugging
-func _on_state_machine_transitioned(state: PlayerState) -> void:
+## Note that it's triggered after the '_state' "enter" method
+func _on_state_machine_transitioned(_state: PlayerState) -> void:
 	pass

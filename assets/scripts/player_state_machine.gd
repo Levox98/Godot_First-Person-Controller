@@ -5,6 +5,7 @@ signal transitioned(state: PlayerState)
 static var FROM = "from_state"
 static var TO = "to_state"
 
+# Probably not the best way to store the state constants
 static var IDLE = 0
 static var WALK = 1
 static var SPRINT = 2
@@ -52,9 +53,8 @@ func _physics_process(delta: float) -> void:
 
 
 func transition_to(target_state_name: String, msg: Dictionary = {}) -> void:
-	
-	if !has_node(str(target_state_name)):
-		print("No target node \"" + target_state_name + "\" found")
+	if not has_node(str(target_state_name)):
+		push_error("No target node \"" + target_state_name + "\" found")
 		return
 	
 	if state == get_node(target_state_name):

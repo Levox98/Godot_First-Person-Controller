@@ -10,7 +10,7 @@
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/fall.gd" id="7_dv6ye"]
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/climb.gd" id="10_o7gmx"]
 [ext_resource type="Script" path="res://assets/scripts/player_move_state/grab.gd" id="11_gkc45"]
-[ext_resource type="Script" path="res://assets/scripts/slide.gd" id="12_bqyfq"]
+[ext_resource type="Script" path="res://assets/scripts/player_move_state/slide.gd" id="12_bqyfq"]
 [ext_resource type="Script" path="res://assets/scripts/player_ui.gd" id="12_d7xi0"]
 
 [sub_resource type="Animation" id="Animation_5udu4"]

@@ -22,18 +22,16 @@ func physics_update(_delta: float) -> void:
 	if player.velocity.y < 0:
 		state_machine.transition_to(
 			state_machine.movement_state[state_machine.FALL],
-			{ 
-				state_machine.TO : init_state,
-			}
+			{ state_machine.TO : init_state }
 		)
 	
 	if Input.is_action_just_released("sprint"):
 		init_state = state_machine.WALK
 	
-## TODO: add some control in the air
 	input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction := (player.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
+	# this gives some in-air control if jumping from standing still
 	if (has_direction && player.velocity.length() < player.walk_back_speed) || !has_direction:
 		if direction:
 			player.velocity.x = direction.x * move_speed
