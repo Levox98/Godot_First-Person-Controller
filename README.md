@@ -1,4 +1,4 @@
-# "Immersive" First Person Controller v0.1
+# "Immersive" First Person Controller v1.0
 A first-person controller designed for "immersive sim"-like control. The behaviour is done through a finite state machine. I just wanted to learn the pattern and make something useful at the same time. Feel free to contribute or submit issues :)
 
 ## How to use
