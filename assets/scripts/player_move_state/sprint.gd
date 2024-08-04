@@ -24,8 +24,7 @@ func handle_input(event: InputEvent) -> void:
 
 
 func physics_update(_delta: float) -> void:
-	
-	if !Input.is_action_pressed("sprint"):
+	if not Input.is_action_pressed("sprint"):
 		state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
 	
 	input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")

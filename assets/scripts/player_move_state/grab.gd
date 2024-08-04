@@ -9,16 +9,18 @@ func enter(msg := {}) -> void:
 		ledge_position = msg["ledge_position"]
 	
 	player.velocity = Vector3.ZERO
-	player.gravity = 0
+	player.is_affected_by_gravity = false
 	
 	
 	if player.check_small_ledge():
+		player.set_climb_speed(true)
 		if player.can_climb:
 			state_machine.transition_to(
 				state_machine.movement_state[state_machine.CLIMB],
 				{ "ledge_position" = player.ledge_position }
 			)
 	else:
+		player.set_climb_speed(false)
 		_setup_timer(_on_grab_timer_timeout)
 		grab_timer.start()
 
@@ -37,8 +39,8 @@ func handle_input(event: InputEvent) -> void:
 		)
 
 
-func physics_update(delta: float) -> void:
-	if !Input.is_action_pressed("jump"):
+func physics_update(_delta: float) -> void:
+	if not Input.is_action_pressed("jump"):
 		
 		if grab_timer != null:
 			grab_timer.queue_free()
@@ -65,4 +67,3 @@ func _on_grab_timer_timeout() -> void:
 		state_machine.movement_state[state_machine.CLIMB],
 		{ "ledge_position" = player.ledge_position }
 	)
-	

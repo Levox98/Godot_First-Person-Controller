@@ -9,9 +9,6 @@ func _draw() -> void:
 	_draw_crosshair()
 
 
+## Use this method if you want to draw a custom crosshair. Remove if you want to use a custom image for the crosshair
 func _draw_crosshair() -> void:
 	crosshair.draw_circle(Vector2.ZERO, 1.0, Color.WHITE)
-	#crosshair.draw_line(Vector2(8, 0), Vector2(16, 0), Color.WHITE, 2.0)
-	#crosshair.draw_line(Vector2(-8, 0), Vector2(-16, 0), Color.WHITE, 2.0)
-	#crosshair.draw_line(Vector2(0, 8), Vector2(0, 16), Color.WHITE, 2.0)
-	#crosshair.draw_line(Vector2(0, -8), Vector2(0, -16), Color.WHITE, 2.0)

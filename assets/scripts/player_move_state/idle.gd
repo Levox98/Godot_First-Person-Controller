@@ -2,9 +2,7 @@ class_name Idle extends PlayerState
 
 
 func enter(_msg := {}) -> void:
-	#if not player.can_climb:
-		#player.can_climb = true
-	player.gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
+	player.is_affected_by_gravity = true
 	player.velocity = Vector3.ZERO
 
 
