@@ -9,8 +9,8 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var jump_height: float = 1.0
 @export var acceleration: float = 10.0
 @export var arm_length: float = 0.5
-@export var regular_climb_speed: float = 300.0
-@export var fast_climb_speed: float = 400.0
+@export var regular_climb_speed: float = 6.0
+@export var fast_climb_speed: float = 8.0
 
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var state_machine: PlayerStateMachine = %StateMachine

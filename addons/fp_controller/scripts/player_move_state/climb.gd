@@ -22,7 +22,7 @@ func handle_input(event: InputEvent) -> void:
 func physics_update(delta: float) -> void:
 	var direction = player.global_position.direction_to(ledge_position)
 	
-	player.velocity = direction * player.climb_speed * delta
+	player.velocity = direction * player.climb_speed
 	
 	if int(player.global_position.y * 10) in range(ledge_position.y * 10 - 1, ledge_position.y * 10):
 		state_machine.transition_to(state_machine.movement_state[state_machine.IDLE])
