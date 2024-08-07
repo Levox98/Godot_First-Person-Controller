@@ -2,6 +2,16 @@ class_name Player extends CharacterBody3D
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
+# Default controls
+@export var FORWARD: String = "move_forward"
+@export var BACK: String = "move_back"
+@export var LEFT: String = "move_left"
+@export var RIGHT: String = "move_right"
+@export var JUMP: String = "jump"
+@export var CROUCH: String = "crouch"
+@export var SPRINT: String = "sprint"
+@export var PAUSE: String = "pause"
+
 # Customizable player stats
 @export var walk_back_speed: float = 3.0
 @export var walk_speed: float = 5.0
@@ -33,7 +43,8 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 # Raycast for detecting ceiling
 @onready var crouch_raycast = %CrouchRaycast
 
-# Dynamic values used for calculation 
+# Dynamic values used for calculation
+var input_direction: Vector2
 var ledge_position: Vector3 = Vector3.ZERO
 var mouse_motion: Vector2
 
@@ -44,26 +55,67 @@ var can_climb: bool
 var can_climb_timer: Timer
 var is_affected_by_gravity: bool = true
 
+# Values that are set 'false' if corresponding controls aren't mapped
+var can_move: bool = true
+var can_jump: bool = true
+var can_crouch: bool = true
+var can_sprint: bool = true
+var can_pause: bool = true
+
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	check_controls()
+	if can_pause:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+func check_controls() -> void:
+	if !InputMap.has_action(FORWARD):
+		push_error("No control mapped for 'move forward'")
+		can_move = false
+	if !InputMap.has_action(BACK):
+		push_error("No control mapped for 'move backward'")
+		can_move = false
+	if !InputMap.has_action(LEFT):
+		push_error("No control mapped for 'move left'")
+		can_move = false
+	if !InputMap.has_action(RIGHT):
+		push_error("No control mapped for 'move right'")
+		can_move = false
+	if !InputMap.has_action(JUMP):
+		push_error("No control mapped for 'jumping'")
+		can_jump = false
+	if !InputMap.has_action(CROUCH):
+		push_error("No control mapped for 'crouch'")
+		can_crouch = false
+	if !InputMap.has_action(SPRINT):
+		push_error("No control mapped for 'sprint'")
+		can_sprint = false
+	if !InputMap.has_action(PAUSE):
+		push_error("No control mapped for 'pause'")
+		can_pause = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouse_motion = -event.relative * 0.001
 	
-	if event.is_action_pressed("pause"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if can_pause:
+		if event.is_action_pressed("pause"):
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
-	if event.is_action_pressed("crouch"):
-		if is_crouched:
-			stand_up()
-		else:
-			crouch()
+	if can_crouch:
+		if event.is_action_pressed("crouch"):
+			if is_crouched:
+				stand_up()
+			else:
+				crouch()
 
 
 func _physics_process(delta: float) -> void:
+	if can_move:
+		input_direction = Input.get_vector(LEFT, RIGHT, FORWARD, BACK)
+	
 	# Add the gravity.
 	if not is_on_floor() && is_affected_by_gravity:
 		velocity.y -= gravity * delta

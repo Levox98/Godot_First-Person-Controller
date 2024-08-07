@@ -14,7 +14,7 @@ func enter(msg := {}) -> void:
 		init_state = msg[state_machine.TO]
 	
 	move_speed = player.walk_back_speed
-	has_direction = Input.get_vector("move_left", "move_right", "move_forward", "move_back") != Vector2.ZERO
+	has_direction = player.input_direction != Vector2.ZERO
 	player.velocity.y = sqrt(player.jump_height * 2 * player.gravity)
 
 
@@ -28,7 +28,7 @@ func physics_update(_delta: float) -> void:
 	if Input.is_action_just_released("sprint"):
 		init_state = state_machine.WALK
 	
-	input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	input_dir = player.input_direction
 	var direction := (player.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	# this gives some in-air control if jumping from standing still
