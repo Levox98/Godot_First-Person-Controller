@@ -123,8 +123,6 @@ func _physics_process(delta: float) -> void:
 			can_climb_timer.queue_free()
 		can_climb = true
 	
-	print(velocity.length())
-	
 	move_and_slide()
 
 

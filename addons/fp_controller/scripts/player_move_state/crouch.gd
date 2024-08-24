@@ -5,7 +5,8 @@ var move_speed: float
 
 
 func enter(_msg := {}) -> void:
-	player.toggle_crouch()
+	if !player.is_crouched:
+		player.toggle_crouch()
 
 
 func handle_input(event: InputEvent) -> void:
