@@ -21,10 +21,12 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var arm_length: float = 0.5
 @export var regular_climb_speed: float = 6.0
 @export var fast_climb_speed: float = 8.0
+@export_range(0.0, 1.0) var view_bobbing_amount: float
 
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var state_machine: PlayerStateMachine = %StateMachine
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
+@onready var view_bobbing_player = %ViewBobbingPlayer
 
 # Raycasts used for detecting if the player is touching a wall
 @onready var bottom_raycast: RayCast3D = %BottomRaycast
@@ -48,12 +50,13 @@ var input_direction: Vector2
 var ledge_position: Vector3 = Vector3.ZERO
 var mouse_motion: Vector2
 
-# Player state values that aren't supposed to be changed directly
+# Player state values that are set by applying state
 var climb_speed: float = fast_climb_speed
 var is_crouched: bool = false
 var can_climb: bool
 var can_climb_timer: Timer
 var is_affected_by_gravity: bool = true
+var is_moving: bool = false
 
 # Values that are set 'false' if corresponding controls aren't mapped
 var can_move: bool = true
@@ -220,6 +223,11 @@ func _on_grab_available_timeout() -> void:
 
 
 ## Triggers on every state transition. Could be useful for side effects and debugging
-## Note that it's triggered after the '_state' "enter" method
-func _on_state_machine_transitioned(_state: PlayerState) -> void:
-	pass
+## Note that it's triggered after the 'state' "enter" method
+func _on_state_machine_transitioned(state: PlayerState) -> void:
+	is_moving = state is Walk || state is Sprint
+	
+	if is_moving:
+		view_bobbing_player.play("view_bobbing", -1, view_bobbing_amount, false)
+	else:
+		view_bobbing_player.stop()
