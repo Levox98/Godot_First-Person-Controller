@@ -16,6 +16,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var walk_back_speed: float = 3.0
 @export var walk_speed: float = 5.0
 @export var sprint_speed: float = 10.0
+@export var crouch_speed: float = 4.0
 @export var jump_height: float = 1.0
 @export var acceleration: float = 10.0
 @export var arm_length: float = 0.5
@@ -106,13 +107,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if can_pause:
 		if event.is_action_pressed("pause"):
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	
-	if can_crouch:
-		if event.is_action_pressed("crouch"):
-			if is_crouched:
-				stand_up()
-			else:
-				crouch()
 
 
 func _physics_process(delta: float) -> void:
@@ -128,6 +122,8 @@ func _physics_process(delta: float) -> void:
 		if can_climb_timer != null:
 			can_climb_timer.queue_free()
 		can_climb = true
+	
+	print(velocity.length())
 	
 	move_and_slide()
 
@@ -185,20 +181,13 @@ func set_climb_speed(is_small_ledge) -> void:
 		climb_speed = regular_climb_speed
 
 
-func crouch() -> void:
-	if not state_machine.state_allows_crouch():
-		return
+func toggle_crouch() -> void:
+	is_crouched = !is_crouched
 	
-	animation_player.play("crouch")
-	is_crouched = true
-
-
-func stand_up() -> void:
-	if crouch_raycast.is_colliding():
-		return
-	
-	animation_player.play_backwards("crouch")
-	is_crouched = false
+	if is_crouched:
+		animation_player.play("crouch")
+	else:
+		animation_player.play_backwards("crouch")
 
 
 func setup_can_climb_timer(callback: Callable = _on_grab_available_timeout) -> void:
@@ -225,6 +214,7 @@ func _on_grab_available_timeout() -> void:
 ## Triggers on every state transition. Could be useful for side effects and debugging
 ## Note that it's triggered after the 'state' "enter" method
 func _on_state_machine_transitioned(state: PlayerState) -> void:
+	print(state.name)
 	is_moving = state is Walk || state is Sprint
 	
 	if is_moving:

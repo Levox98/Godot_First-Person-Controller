@@ -8,7 +8,6 @@
 [ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/walk.gd" id="5_bwgwe"]
 [ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/sprint.gd" id="6_b4xrx"]
 [ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/fall.gd" id="7_dv6ye"]
-[ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/crouch.gd" id="9_yxb0u"]
 [ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/climb.gd" id="10_o7gmx"]
 [ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/grab.gd" id="11_gkc45"]
 [ext_resource type="Script" path="res://addons/fp_controller/scripts/player_move_state/slide.gd" id="12_bqyfq"]
@@ -212,7 +211,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_463io"]
 resource_name = "view_bobbing"
-length = 0.6
+length = 0.4
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -221,10 +220,10 @@ tracks/0/path = NodePath("CameraPivot/SmoothCamera:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.433333),
-"transitions": PackedFloat32Array(1, -0.5),
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 0.5),
 "update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, -0.1, 0)]
+"values": [Vector3(0, 0, 0), Vector3(0, -0.05, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gsp4e"]
@@ -239,12 +238,19 @@ height = 1.8
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_aufvi"]
 height = 1.8
 
+[sub_resource type="GDScript" id="GDScript_ukybc"]
+script/source = "class_name Crouch extends PlayerState
+
+
+func enter(_msg := {}) -> void:
+	player.crouch()
+"
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_5ras8")
 walk_back_speed = 1.5
 walk_speed = 2.5
 sprint_speed = 5.0
-crouch_speed = 2.0
 view_bobbing_amount = 1.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
@@ -345,7 +351,7 @@ script = ExtResource("6_b4xrx")
 script = ExtResource("7_dv6ye")
 
 [node name="Crouch" type="Node" parent="StateMachine"]
-script = ExtResource("9_yxb0u")
+script = SubResource("GDScript_ukybc")
 
 [node name="Climb" type="Node" parent="StateMachine"]
 script = ExtResource("10_o7gmx")
