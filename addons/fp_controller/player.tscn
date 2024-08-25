@@ -196,7 +196,7 @@ _data = {
 }
 
 [sub_resource type="Animation" id="Animation_caog8"]
-length = 0.001
+length = 0.3
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -204,8 +204,8 @@ tracks/0/path = NodePath("CameraPivot/SmoothCamera:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(2),
 "update": 0,
 "values": [Vector3(0, 0, 0)]
 }
@@ -221,8 +221,8 @@ tracks/0/path = NodePath("CameraPivot/SmoothCamera:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.433333),
-"transitions": PackedFloat32Array(1, -0.5),
+"times": PackedFloat32Array(0, 0.366667),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(0, 0, 0), Vector3(0, -0.1, 0)]
 }

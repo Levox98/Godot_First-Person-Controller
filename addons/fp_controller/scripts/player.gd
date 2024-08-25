@@ -216,6 +216,6 @@ func _on_state_machine_transitioned(state: PlayerState) -> void:
 	is_moving = state is Walk || state is Sprint
 	
 	if is_moving:
-		view_bobbing_player.play("view_bobbing", -1, view_bobbing_amount, false)
+		view_bobbing_player.play("view_bobbing", .5, view_bobbing_amount, false)
 	else:
-		view_bobbing_player.stop()
+		view_bobbing_player.play("RESET", .5)
