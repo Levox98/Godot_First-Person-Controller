@@ -75,19 +75,19 @@ func _ready() -> void:
 
 func check_controls() -> void:
 	if !InputMap.has_action(FORWARD):
-		push_error("No control mapped for 'move forward'")
+		push_error("No control mapped for 'move_forward'")
 		can_move = false
 	if !InputMap.has_action(BACK):
-		push_error("No control mapped for 'move backward'")
+		push_error("No control mapped for 'move_back'")
 		can_move = false
 	if !InputMap.has_action(LEFT):
-		push_error("No control mapped for 'move left'")
+		push_error("No control mapped for 'move_left'")
 		can_move = false
 	if !InputMap.has_action(RIGHT):
-		push_error("No control mapped for 'move right'")
+		push_error("No control mapped for 'move_right'")
 		can_move = false
 	if !InputMap.has_action(JUMP):
-		push_error("No control mapped for 'jumping'")
+		push_error("No control mapped for 'jump'")
 		can_jump = false
 	if !InputMap.has_action(CROUCH):
 		push_error("No control mapped for 'crouch'")
