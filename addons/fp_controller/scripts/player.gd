@@ -2,7 +2,7 @@ class_name Player extends CharacterBody3D
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-# Default controls
+@export_group("Controls map names")
 @export var FORWARD: String = "move_forward"
 @export var BACK: String = "move_back"
 @export var LEFT: String = "move_left"
@@ -12,11 +12,11 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var SPRINT: String = "sprint"
 @export var PAUSE: String = "pause"
 
-# Customizable player stats
-@export var walk_back_speed: float = 3.0
-@export var walk_speed: float = 5.0
-@export var sprint_speed: float = 10.0
-@export var crouch_speed: float = 4.0
+@export_group("Customizable player stats")
+@export var walk_back_speed: float = 1.5
+@export var walk_speed: float = 2.5
+@export var sprint_speed: float = 5.0
+@export var crouch_speed: float = 1.5
 @export var jump_height: float = 1.0
 @export var acceleration: float = 10.0
 @export var arm_length: float = 0.5
@@ -24,6 +24,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var fast_climb_speed: float = 8.0
 @export_range(0.0, 1.0) var view_bobbing_amount: float
 
+# Player 'character' components
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var state_machine: PlayerStateMachine = %StateMachine
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
