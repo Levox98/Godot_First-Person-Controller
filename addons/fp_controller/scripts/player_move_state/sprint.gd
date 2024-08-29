@@ -6,11 +6,14 @@ var move_speed: float
 
 func enter(_msg := {}) -> void:
 	if player.is_crouched:
-		player.stand_up()
+		player.toggle_crouch()
+	
+	player.view_bobbing_amount *= 1.3
 
 
 func handle_input(event: InputEvent) -> void:
 	if event.is_action_pressed("jump") && player.is_on_floor():
+		player.view_bobbing_amount /= 1.3
 		state_machine.transition_to(
 			state_machine.movement_state[state_machine.JUMP], 
 			{ 
@@ -20,7 +23,11 @@ func handle_input(event: InputEvent) -> void:
 		)
 	
 	if Input.is_action_just_released("sprint"):
+		player.view_bobbing_amount /= 1.3
 		state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
+	
+	if Input.is_action_just_pressed("crouch"):
+		state_machine.transition_to(state_machine.movement_state[state_machine.SLIDE])
 
 
 func physics_update(_delta: float) -> void:
@@ -34,9 +41,6 @@ func physics_update(_delta: float) -> void:
 		move_speed = player.walk_back_speed
 	else:
 		move_speed = player.sprint_speed
-	
-	if player.is_crouched:
-		state_machine.transition_to(state_machine.movement_state[state_machine.SLIDE])
 	
 	if direction:
 		player.velocity.x = direction.x * move_speed

@@ -16,6 +16,15 @@ func handle_input(event: InputEvent) -> void:
 					state_machine.TO : state_machine.IDLE,
 				}
 			)
+	
+	if player.can_crouch:
+		if event.is_action_pressed("crouch") && player.is_on_floor():
+			state_machine.transition_to(
+				state_machine.movement_state[state_machine.CROUCH],
+				{
+					state_machine.TO : state_machine.IDLE
+				}
+			)
 
 
 func physics_update(_delta: float) -> void:

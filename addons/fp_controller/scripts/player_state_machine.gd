@@ -64,7 +64,3 @@ func transition_to(target_state_name: String, msg: Dictionary = {}) -> void:
 	state = get_node(target_state_name)
 	state.enter(msg)
 	emit_signal("transitioned", state)
-
-
-func state_allows_crouch() -> bool:
-	return state is Idle || state is Walk || state is Sprint
