@@ -76,29 +76,29 @@ func _ready() -> void:
 
 func check_controls() -> void:
 	if !InputMap.has_action(FORWARD):
-		push_error("No control mapped for 'move_forward'")
-		can_move = false
+		push_error("No control mapped for 'move_forward', using default...")
+		_add_input_map_event(KEY_W, FORWARD)
 	if !InputMap.has_action(BACK):
-		push_error("No control mapped for 'move_back'")
-		can_move = false
+		push_error("No control mapped for 'move_back', using default...")
+		_add_input_map_event(KEY_S, BACK)
 	if !InputMap.has_action(LEFT):
-		push_error("No control mapped for 'move_left'")
-		can_move = false
+		push_error("No control mapped for 'move_left', using default...")
+		_add_input_map_event(KEY_A, LEFT)
 	if !InputMap.has_action(RIGHT):
-		push_error("No control mapped for 'move_right'")
-		can_move = false
+		push_error("No control mapped for 'move_right', using default...")
+		_add_input_map_event(KEY_D, RIGHT)
 	if !InputMap.has_action(JUMP):
-		push_error("No control mapped for 'jump'")
-		can_jump = false
+		push_error("No control mapped for 'jump', using default...")
+		_add_input_map_event(KEY_SPACE, JUMP)
 	if !InputMap.has_action(CROUCH):
-		push_error("No control mapped for 'crouch'")
-		can_crouch = false
+		push_error("No control mapped for 'crouch', using default...")
+		_add_input_map_event(KEY_C, CROUCH)
 	if !InputMap.has_action(SPRINT):
-		push_error("No control mapped for 'sprint'")
-		can_sprint = false
+		push_error("No control mapped for 'sprint', using default...")
+		_add_input_map_event(KEY_SHIFT, SPRINT)
 	if !InputMap.has_action(PAUSE):
-		push_error("No control mapped for 'pause'")
-		can_pause = false
+		push_error("No control mapped for 'pause', using default...")
+		_add_input_map_event(KEY_ESCAPE, PAUSE)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -220,3 +220,10 @@ func _on_state_machine_transitioned(state: PlayerState) -> void:
 		view_bobbing_player.play("view_bobbing", .5, view_bobbing_amount, false)
 	else:
 		view_bobbing_player.play("RESET", .5)
+
+
+func _add_input_map_event(keycode: int, action_name: String) -> void:
+	var event = InputEventKey.new()
+	event.keycode = keycode
+	InputMap.add_action(action_name)
+	InputMap.action_add_event(action_name, event)
