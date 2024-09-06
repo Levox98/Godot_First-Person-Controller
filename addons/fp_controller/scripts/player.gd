@@ -24,6 +24,12 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var fast_climb_speed: float = 8.0
 @export_range(0.0, 1.0) var view_bobbing_amount: float
 
+@export_group("Feature toggles")
+@export var allow_jump: bool = true
+@export var allow_crouch: bool = true
+@export var allow_sprint: bool = true
+@export var allow_climb: bool = true
+
 # Player 'character' components
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var state_machine: PlayerStateMachine = %StateMachine

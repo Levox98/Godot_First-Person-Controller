@@ -12,7 +12,7 @@ func enter(_msg := {}) -> void:
 
 
 func handle_input(event: InputEvent) -> void:
-	if event.is_action_pressed("jump") && player.is_on_floor():
+	if event.is_action_pressed("jump") && player.is_on_floor() && player.allow_jump:
 		player.view_bobbing_amount = player.default_view_bobbing_amount
 		state_machine.transition_to(
 			state_machine.movement_state[state_machine.JUMP], 
@@ -26,7 +26,7 @@ func handle_input(event: InputEvent) -> void:
 		player.view_bobbing_amount = player.default_view_bobbing_amount
 		state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
 	
-	if Input.is_action_just_pressed("crouch"):
+	if Input.is_action_just_pressed("crouch") && player.allow_crouch:
 		player.view_bobbing_amount = player.default_view_bobbing_amount
 		state_machine.transition_to(state_machine.movement_state[state_machine.SLIDE])
 

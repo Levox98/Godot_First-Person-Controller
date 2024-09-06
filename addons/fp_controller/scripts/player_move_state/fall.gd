@@ -20,7 +20,7 @@ func physics_update(_delta: float) -> void:
 	if player.is_on_floor():
 		state_machine.transition_to(state_machine.movement_state[init_state])
 	
-	if Input.is_action_pressed("jump") && player.can_climb:
+	if Input.is_action_pressed("jump") && player.can_climb && player.allow_climb:
 		if player.check_climbable():
 			state_machine.transition_to(
 				state_machine.movement_state[state_machine.GRAB],
