@@ -51,6 +51,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var input_direction: Vector2
 var ledge_position: Vector3 = Vector3.ZERO
 var mouse_motion: Vector2
+var default_view_bobbing_amount: float
 
 # Player state values that are set by applying state
 var climb_speed: float = fast_climb_speed
@@ -69,6 +70,7 @@ var can_pause: bool = true
 
 
 func _ready() -> void:
+	default_view_bobbing_amount = view_bobbing_amount
 	check_controls()
 	if can_pause:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -213,7 +215,6 @@ func _on_grab_available_timeout() -> void:
 ## Triggers on every state transition. Could be useful for side effects and debugging
 ## Note that it's triggered after the 'state' "enter" method
 func _on_state_machine_transitioned(state: PlayerState) -> void:
-	print(state.name)
 	is_moving = state is Walk || state is Sprint
 	
 	if is_moving:

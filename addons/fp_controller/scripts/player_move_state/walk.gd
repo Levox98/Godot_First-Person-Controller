@@ -5,7 +5,7 @@ var move_speed: float
 
 
 func enter(_msg := {}) -> void:
-	pass
+	player.view_bobbing_amount = player.default_view_bobbing_amount
 
 
 func handle_input(event: InputEvent) -> void:

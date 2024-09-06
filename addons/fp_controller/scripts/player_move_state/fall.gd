@@ -5,6 +5,7 @@ var init_state: int
 
 
 func enter(msg := {}) -> void:
+	player.view_bobbing_amount = player.default_view_bobbing_amount
 	player.is_affected_by_gravity = true
 	if msg:
 		init_state = msg[state_machine.TO]
