@@ -25,7 +25,7 @@ func physics_update(_delta: float) -> void:
 			{ state_machine.TO : init_state }
 		)
 	
-	if Input.is_action_just_released("sprint"):
+	if Input.is_action_just_released(player.SPRINT):
 		init_state = state_machine.WALK
 	
 	input_dir = player.input_direction

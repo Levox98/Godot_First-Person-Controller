@@ -26,7 +26,7 @@ func enter(msg := {}) -> void:
 
 
 func handle_input(event: InputEvent) -> void:
-	if event.is_action_released("jump"):
+	if event.is_action_released(player.JUMP):
 		player.setup_can_climb_timer()
 		if grab_timer != null:
 			grab_timer.queue_free()
@@ -40,7 +40,7 @@ func handle_input(event: InputEvent) -> void:
 
 
 func physics_update(_delta: float) -> void:
-	if not Input.is_action_pressed("jump"):
+	if not Input.is_action_pressed(player.JUMP):
 		
 		if grab_timer != null:
 			grab_timer.queue_free()

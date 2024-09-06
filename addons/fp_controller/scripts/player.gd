@@ -3,10 +3,10 @@ class_name Player extends CharacterBody3D
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @export_group("Controls map names")
-@export var FORWARD: String = "move_forward"
-@export var BACK: String = "move_back"
-@export var LEFT: String = "move_left"
-@export var RIGHT: String = "move_right"
+@export var MOVE_FORWARD: String = "move_forward"
+@export var MOVE_BACK: String = "move_back"
+@export var MOVE_LEFT: String = "move_left"
+@export var MOVE_RIGHT: String = "move_right"
 @export var JUMP: String = "jump"
 @export var CROUCH: String = "crouch"
 @export var SPRINT: String = "sprint"
@@ -83,18 +83,18 @@ func _ready() -> void:
 
 
 func check_controls() -> void:
-	if !InputMap.has_action(FORWARD):
+	if !InputMap.has_action(MOVE_FORWARD):
 		push_error("No control mapped for 'move_forward', using default...")
-		_add_input_map_event(KEY_W, FORWARD)
-	if !InputMap.has_action(BACK):
+		_add_input_map_event(KEY_W, MOVE_FORWARD)
+	if !InputMap.has_action(MOVE_BACK):
 		push_error("No control mapped for 'move_back', using default...")
-		_add_input_map_event(KEY_S, BACK)
-	if !InputMap.has_action(LEFT):
+		_add_input_map_event(KEY_S, MOVE_BACK)
+	if !InputMap.has_action(MOVE_LEFT):
 		push_error("No control mapped for 'move_left', using default...")
-		_add_input_map_event(KEY_A, LEFT)
-	if !InputMap.has_action(RIGHT):
+		_add_input_map_event(KEY_A, MOVE_LEFT)
+	if !InputMap.has_action(MOVE_RIGHT):
 		push_error("No control mapped for 'move_right', using default...")
-		_add_input_map_event(KEY_D, RIGHT)
+		_add_input_map_event(KEY_D, MOVE_RIGHT)
 	if !InputMap.has_action(JUMP):
 		push_error("No control mapped for 'jump', using default...")
 		_add_input_map_event(KEY_SPACE, JUMP)
@@ -114,13 +114,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		mouse_motion = -event.relative * 0.001
 	
 	if can_pause:
-		if event.is_action_pressed("pause"):
+		if event.is_action_pressed(PAUSE):
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _physics_process(delta: float) -> void:
 	if can_move:
-		input_direction = Input.get_vector(LEFT, RIGHT, FORWARD, BACK)
+		input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
 	
 	# Add the gravity.
 	if not is_on_floor() && is_affected_by_gravity:
