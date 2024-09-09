@@ -85,28 +85,32 @@ func _ready() -> void:
 func check_controls() -> void:
 	if !InputMap.has_action(MOVE_FORWARD):
 		push_error("No control mapped for 'move_forward', using default...")
-		_add_input_map_event(KEY_W, MOVE_FORWARD)
+		_add_input_map_event(MOVE_FORWARD, KEY_W)
 	if !InputMap.has_action(MOVE_BACK):
 		push_error("No control mapped for 'move_back', using default...")
-		_add_input_map_event(KEY_S, MOVE_BACK)
+		_add_input_map_event(MOVE_BACK, KEY_S)
 	if !InputMap.has_action(MOVE_LEFT):
 		push_error("No control mapped for 'move_left', using default...")
-		_add_input_map_event(KEY_A, MOVE_LEFT)
+		_add_input_map_event(MOVE_LEFT, KEY_A)
 	if !InputMap.has_action(MOVE_RIGHT):
 		push_error("No control mapped for 'move_right', using default...")
-		_add_input_map_event(KEY_D, MOVE_RIGHT)
+		_add_input_map_event(MOVE_RIGHT, KEY_D)
 	if !InputMap.has_action(JUMP):
 		push_error("No control mapped for 'jump', using default...")
-		_add_input_map_event(KEY_SPACE, JUMP)
+		_add_input_map_event(JUMP, KEY_SPACE)
+		_add_joy_button_event(JUMP, JOY_BUTTON_A)
 	if !InputMap.has_action(CROUCH):
 		push_error("No control mapped for 'crouch', using default...")
-		_add_input_map_event(KEY_C, CROUCH)
+		_add_input_map_event(CROUCH, KEY_C)
+		_add_joy_button_event(CROUCH, JOY_BUTTON_B)
 	if !InputMap.has_action(SPRINT):
 		push_error("No control mapped for 'sprint', using default...")
-		_add_input_map_event(KEY_SHIFT, SPRINT)
+		_add_input_map_event(SPRINT, KEY_SHIFT)
+		_add_joy_button_event(SPRINT, JOY_BUTTON_LEFT_STICK)
 	if !InputMap.has_action(PAUSE):
 		push_error("No control mapped for 'pause', using default...")
-		_add_input_map_event(KEY_ESCAPE, PAUSE)
+		_add_input_map_event(PAUSE, KEY_ESCAPE)
+		_add_joy_button_event(PAUSE, JOY_BUTTON_START)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -116,11 +120,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if can_pause:
 		if event.is_action_pressed(PAUSE):
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
+	print(event)
 
 
 func _physics_process(delta: float) -> void:
 	if can_move:
-		input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
+		if Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK):
+			input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
+		elif Input.get_connected_joypads().size() != 0:
+			input_direction = Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
 	
 	# Add the gravity.
 	if not is_on_floor() && is_affected_by_gravity:
@@ -139,6 +148,9 @@ func _process(_delta: float):
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		# Handling camera in '_process' so that camera movement is framerate independent
 		_handle_camera_motion()
+	
+	#if Input.get_connected_joypads().size() != 0 && InputEventJoypadMotion:
+		#_handle_joy_camera_motion()
 
 
 func _handle_camera_motion() -> void:
@@ -150,6 +162,27 @@ func _handle_camera_motion() -> void:
 	)
 	
 	mouse_motion = Vector2.ZERO
+
+
+#func _handle_joy_camera_motion() -> void:
+	#var x_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	#var y_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	#
+	#var current_x: float = 0
+	#var current_y: float = 0
+	#
+	#current_x = current_x - x_axis
+	#current_y = current_y - y_axis
+	#
+	#rotate_y(-y_axis)
+	#camera_pivot.rotate_x(-x_axis)
+	#
+	#camera_pivot.rotation_degrees.x = clampf(
+		#camera_pivot.rotation_degrees.x , -89.0, 89.0
+	#)
+	#
+	#current_x = 0
+	#current_y = 0
 
 
 func check_climbable() -> bool:
@@ -229,8 +262,14 @@ func _on_state_machine_transitioned(state: PlayerState) -> void:
 		view_bobbing_player.play("RESET", .5)
 
 
-func _add_input_map_event(keycode: int, action_name: String) -> void:
+func _add_input_map_event(action_name: String, keycode: int) -> void:
 	var event = InputEventKey.new()
 	event.keycode = keycode
 	InputMap.add_action(action_name)
 	InputMap.action_add_event(action_name, event)
+
+
+func _add_joy_button_event(action_name: String, joy_button: JoyButton = 100) -> void:
+	var joy_button_event = InputEventJoypadButton.new()
+	joy_button_event.button_index = joy_button
+	InputMap.action_add_event(action_name, joy_button_event)

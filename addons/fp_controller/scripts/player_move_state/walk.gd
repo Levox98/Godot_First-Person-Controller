@@ -9,7 +9,7 @@ func enter(_msg := {}) -> void:
 
 
 func handle_input(event: InputEvent) -> void:
-	if Input.is_action_pressed(player.SPRINT) && player.allow_sprint:
+	if Input.is_action_just_pressed(player.SPRINT) && player.allow_sprint:
 		state_machine.transition_to(state_machine.movement_state[state_machine.SPRINT])
 	
 	if event.is_action_pressed(player.JUMP) && player.is_on_floor() && player.allow_jump:

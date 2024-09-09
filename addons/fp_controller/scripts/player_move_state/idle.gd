@@ -31,7 +31,7 @@ func physics_update(_delta: float) -> void:
 	var input_dir := player.input_direction
 	
 	if input_dir && player.can_sprint:
-		if Input.is_action_pressed(player.SPRINT) && player.allow_sprint:
+		if Input.is_action_just_pressed(player.SPRINT) && player.allow_sprint:
 			state_machine.transition_to(state_machine.movement_state[state_machine.SPRINT])
 		else:
 			state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
