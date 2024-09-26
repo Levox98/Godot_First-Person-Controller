@@ -126,6 +126,9 @@ func _physics_process(delta: float) -> void:
 	if can_move:
 		if Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK):
 			input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
+		## TODO: fix controller input
+		#elif Input.get_connected_joypads().size() != 0:
+			#input_direction = Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
 		else:
 			input_direction = Vector2.ZERO
 	
@@ -146,6 +149,9 @@ func _process(_delta: float):
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		# Handling camera in '_process' so that camera movement is framerate independent
 		_handle_camera_motion()
+	
+	#if Input.get_connected_joypads().size() != 0 && InputEventJoypadMotion:
+		#_handle_joy_camera_motion()
 
 
 func _handle_camera_motion() -> void:
@@ -157,6 +163,27 @@ func _handle_camera_motion() -> void:
 	)
 	
 	mouse_motion = Vector2.ZERO
+
+## TODO: fix camera movement with controller
+#func _handle_joy_camera_motion() -> void:
+	#var x_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	#var y_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	#
+	#var current_x: float = 0
+	#var current_y: float = 0
+	#
+	#current_x = current_x - x_axis
+	#current_y = current_y - y_axis
+	#
+	#rotate_y(-y_axis)
+	#camera_pivot.rotate_x(-x_axis)
+	#
+	#camera_pivot.rotation_degrees.x = clampf(
+		#camera_pivot.rotation_degrees.x , -89.0, 89.0
+	#)
+	#
+	#current_x = 0
+	#current_y = 0
 
 
 func check_climbable() -> bool:
