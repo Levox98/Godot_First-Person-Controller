@@ -22,19 +22,12 @@ func handle_input(event: InputEvent) -> void:
 			}
 		)
 	
-	#if Input.is_action_just_released(player.SPRINT):
-		#player.view_bobbing_amount = player.default_view_bobbing_amount
-		#state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
-	
 	if Input.is_action_just_pressed(player.CROUCH) && player.allow_crouch:
 		player.view_bobbing_amount = player.default_view_bobbing_amount
 		state_machine.transition_to(state_machine.movement_state[state_machine.SLIDE])
 
 
 func physics_update(_delta: float) -> void:
-	#if not Input.is_action_pressed(player.SPRINT):
-		#state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
-	
 	input_dir = player.input_direction
 	var direction := (player.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	

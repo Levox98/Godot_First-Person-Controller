@@ -120,16 +120,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	if can_pause:
 		if event.is_action_pressed(PAUSE):
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	
-	print(event)
 
 
 func _physics_process(delta: float) -> void:
 	if can_move:
 		if Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK):
 			input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
-		elif Input.get_connected_joypads().size() != 0:
-			input_direction = Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
+		## TODO: fix controller input
+		#elif Input.get_connected_joypads().size() != 0:
+			#input_direction = Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
+		else:
+			input_direction = Vector2.ZERO
 	
 	# Add the gravity.
 	if not is_on_floor() && is_affected_by_gravity:
@@ -163,7 +164,7 @@ func _handle_camera_motion() -> void:
 	
 	mouse_motion = Vector2.ZERO
 
-
+## TODO: fix camera movement with controller
 #func _handle_joy_camera_motion() -> void:
 	#var x_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
 	#var y_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
