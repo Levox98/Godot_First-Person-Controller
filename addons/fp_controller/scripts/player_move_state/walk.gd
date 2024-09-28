@@ -5,14 +5,14 @@ var move_speed: float
 
 
 func enter(_msg := {}) -> void:
-	pass
+	player.view_bobbing_amount = player.default_view_bobbing_amount
 
 
 func handle_input(event: InputEvent) -> void:
-	if Input.is_action_pressed("sprint"):
+	if Input.is_action_just_pressed(player.SPRINT) && player.allow_sprint:
 		state_machine.transition_to(state_machine.movement_state[state_machine.SPRINT])
 	
-	if event.is_action_pressed("jump") && player.is_on_floor():
+	if event.is_action_pressed(player.JUMP) && player.is_on_floor() && player.allow_jump:
 		state_machine.transition_to(
 			state_machine.movement_state[state_machine.JUMP], 
 			{ 
@@ -21,8 +21,8 @@ func handle_input(event: InputEvent) -> void:
 			}
 		)
 	
-	if player.can_crouch:
-		if event.is_action_pressed("crouch") && player.is_on_floor():
+	if player.can_crouch && player.allow_crouch:
+		if event.is_action_pressed(player.CROUCH) && player.is_on_floor():
 			state_machine.transition_to(
 				state_machine.movement_state[state_machine.CROUCH],
 				{
@@ -35,10 +35,13 @@ func physics_update(_delta: float) -> void:
 	input_dir = player.input_direction
 	var direction := (player.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	if Input.is_action_pressed("move_back"):
+	if input_dir.y > 0:
 		move_speed = player.walk_back_speed
 	else:
-		move_speed = player.walk_speed
+		if player.movement_strength == 0:
+			move_speed = player.walk_speed
+		else:
+			move_speed = player.walk_speed * player.movement_strength
 	
 	if direction:
 		player.velocity.x = direction.x * move_speed

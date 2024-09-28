@@ -3,10 +3,10 @@ class_name Player extends CharacterBody3D
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @export_group("Controls map names")
-@export var FORWARD: String = "move_forward"
-@export var BACK: String = "move_back"
-@export var LEFT: String = "move_left"
-@export var RIGHT: String = "move_right"
+@export var MOVE_FORWARD: String = "move_forward"
+@export var MOVE_BACK: String = "move_back"
+@export var MOVE_LEFT: String = "move_left"
+@export var MOVE_RIGHT: String = "move_right"
 @export var JUMP: String = "jump"
 @export var CROUCH: String = "crouch"
 @export var SPRINT: String = "sprint"
@@ -22,7 +22,16 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var arm_length: float = 0.5
 @export var regular_climb_speed: float = 6.0
 @export var fast_climb_speed: float = 8.0
-@export_range(0.0, 1.0) var view_bobbing_amount: float
+@export_range(0.0, 1.0) var view_bobbing_amount: float = 1.0
+@export_range(1.0, 10.0) var camera_sensitivity: float = 2.0
+@export_range(0.0, 0.5) var camera_start_deadzone: float = .2
+@export_range(0.0, 0.5) var camera_end_deadzone: float = .1
+
+@export_group("Feature toggles")
+@export var allow_jump: bool = true
+@export var allow_crouch: bool = true
+@export var allow_sprint: bool = true
+@export var allow_climb: bool = true
 
 # Player 'character' components
 @onready var camera_pivot: Node3D = %CameraPivot
@@ -51,6 +60,8 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var input_direction: Vector2
 var ledge_position: Vector3 = Vector3.ZERO
 var mouse_motion: Vector2
+var default_view_bobbing_amount: float
+var movement_strength: float
 
 # Player state values that are set by applying state
 var climb_speed: float = fast_climb_speed
@@ -69,36 +80,47 @@ var can_pause: bool = true
 
 
 func _ready() -> void:
+	default_view_bobbing_amount = view_bobbing_amount
 	check_controls()
 	if can_pause:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func check_controls() -> void:
-	if !InputMap.has_action(FORWARD):
+	if !InputMap.has_action(MOVE_FORWARD):
 		push_error("No control mapped for 'move_forward', using default...")
-		_add_input_map_event(KEY_W, FORWARD)
-	if !InputMap.has_action(BACK):
+		_add_input_map_event(MOVE_FORWARD, KEY_W)
+	if !InputMap.has_action(MOVE_BACK):
 		push_error("No control mapped for 'move_back', using default...")
-		_add_input_map_event(KEY_S, BACK)
-	if !InputMap.has_action(LEFT):
+		_add_input_map_event(MOVE_BACK, KEY_S)
+	if !InputMap.has_action(MOVE_LEFT):
 		push_error("No control mapped for 'move_left', using default...")
-		_add_input_map_event(KEY_A, LEFT)
-	if !InputMap.has_action(RIGHT):
+		_add_input_map_event(MOVE_LEFT, KEY_A)
+	if !InputMap.has_action(MOVE_RIGHT):
 		push_error("No control mapped for 'move_right', using default...")
-		_add_input_map_event(KEY_D, RIGHT)
+		_add_input_map_event(MOVE_RIGHT, KEY_D)
 	if !InputMap.has_action(JUMP):
 		push_error("No control mapped for 'jump', using default...")
-		_add_input_map_event(KEY_SPACE, JUMP)
+		_add_input_map_event(JUMP, KEY_SPACE)
 	if !InputMap.has_action(CROUCH):
 		push_error("No control mapped for 'crouch', using default...")
-		_add_input_map_event(KEY_C, CROUCH)
+		_add_input_map_event(CROUCH, KEY_C)
 	if !InputMap.has_action(SPRINT):
 		push_error("No control mapped for 'sprint', using default...")
-		_add_input_map_event(KEY_SHIFT, SPRINT)
+		_add_input_map_event(SPRINT, KEY_SHIFT)
 	if !InputMap.has_action(PAUSE):
 		push_error("No control mapped for 'pause', using default...")
-		_add_input_map_event(KEY_ESCAPE, PAUSE)
+		_add_input_map_event(PAUSE, KEY_ESCAPE)
+	
+	# Checking if controller inputs are mapped
+	if InputMap.action_get_events(CROUCH).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(CROUCH, JOY_BUTTON_B)
+	if InputMap.action_get_events(JUMP).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(JUMP, JOY_BUTTON_A)
+	if InputMap.action_get_events(SPRINT).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(SPRINT, JOY_BUTTON_LEFT_STICK)
+	if InputMap.action_get_events(PAUSE).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(PAUSE, JOY_BUTTON_START)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -106,13 +128,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		mouse_motion = -event.relative * 0.001
 	
 	if can_pause:
-		if event.is_action_pressed("pause"):
+		if event.is_action_pressed(PAUSE):
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _physics_process(delta: float) -> void:
 	if can_move:
-		input_direction = Input.get_vector(LEFT, RIGHT, FORWARD, BACK)
+		if Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK):
+			input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
+		elif Input.get_connected_joypads().size() != 0:
+			input_direction = Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
+			var x = Input.get_joy_axis(0, JOY_AXIS_LEFT_X)
+			var y = Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
+			movement_strength = Vector2(x, y).length()
+		else:
+			input_direction = Vector2.ZERO
 	
 	# Add the gravity.
 	if not is_on_floor() && is_affected_by_gravity:
@@ -131,6 +161,9 @@ func _process(_delta: float):
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		# Handling camera in '_process' so that camera movement is framerate independent
 		_handle_camera_motion()
+	
+	if Input.get_connected_joypads().size() != 0:
+		_handle_joy_camera_motion()
 
 
 func _handle_camera_motion() -> void:
@@ -142,6 +175,39 @@ func _handle_camera_motion() -> void:
 	)
 	
 	mouse_motion = Vector2.ZERO
+
+
+func _handle_joy_camera_motion() -> void:
+	var x_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	
+	if abs(x_axis) < camera_start_deadzone:
+		x_axis = 0
+	if abs(x_axis) > 1 - camera_end_deadzone:
+		if x_axis < 0:
+			x_axis = camera_end_deadzone - 1
+		else:
+			x_axis = 1 - camera_end_deadzone
+	
+	var y_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	
+	if abs(y_axis) < camera_start_deadzone:
+		y_axis = 0
+	if abs(y_axis) > 1 - camera_end_deadzone:
+		if y_axis < 0:
+			y_axis = camera_end_deadzone - 1
+		else:
+			y_axis = 1 - camera_end_deadzone
+	
+	var resulting_vector = Vector2(x_axis, y_axis)
+	var normalized_resulting_vector = resulting_vector.normalized()
+	var action_strength = resulting_vector.length()
+	print(camera_sensitivity)
+	rotate_y(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.x * action_strength))
+	camera_pivot.rotate_x(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.y * action_strength))
+	
+	camera_pivot.rotation_degrees.x = clampf(
+		camera_pivot.rotation_degrees.x , -89.0, 89.0
+	)
 
 
 func check_climbable() -> bool:
@@ -213,7 +279,6 @@ func _on_grab_available_timeout() -> void:
 ## Triggers on every state transition. Could be useful for side effects and debugging
 ## Note that it's triggered after the 'state' "enter" method
 func _on_state_machine_transitioned(state: PlayerState) -> void:
-	print(state.name)
 	is_moving = state is Walk || state is Sprint
 	
 	if is_moving:
@@ -222,8 +287,14 @@ func _on_state_machine_transitioned(state: PlayerState) -> void:
 		view_bobbing_player.play("RESET", .5)
 
 
-func _add_input_map_event(keycode: int, action_name: String) -> void:
+func _add_input_map_event(action_name: String, keycode: int) -> void:
 	var event = InputEventKey.new()
 	event.keycode = keycode
 	InputMap.add_action(action_name)
 	InputMap.action_add_event(action_name, event)
+
+
+func _add_joy_button_event(action_name: String, joy_button: JoyButton = 100) -> void:
+	var joy_button_event = InputEventJoypadButton.new()
+	joy_button_event.button_index = joy_button
+	InputMap.action_add_event(action_name, joy_button_event)

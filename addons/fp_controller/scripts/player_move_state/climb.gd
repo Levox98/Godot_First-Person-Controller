@@ -14,7 +14,7 @@ func enter(msg := {}) -> void:
 
 
 func handle_input(event: InputEvent) -> void:
-	if event.is_action_released("jump"):
+	if event.is_action_released(player.JUMP):
 		player.setup_can_climb_timer()
 		state_machine.transition_to(state_machine.movement_state[state_machine.IDLE])
 

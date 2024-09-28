@@ -5,7 +5,7 @@ signal transitioned(state: PlayerState)
 static var FROM = "from_state"
 static var TO = "to_state"
 
-# Probably not the best way to store the state constants
+# probably not the best way to store the state constants
 static var IDLE = 0
 static var WALK = 1
 static var SPRINT = 2
