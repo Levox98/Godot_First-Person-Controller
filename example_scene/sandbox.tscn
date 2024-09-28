@@ -44,6 +44,30 @@ skeleton = NodePath("../..")
 shape = SubResource("ConvexPolygonShape3D_h1lgg")
 
 [node name="Player" parent="." instance=ExtResource("2_l16tt")]
+MOVE_FORWARD = null
+MOVE_BACK = null
+MOVE_LEFT = null
+MOVE_RIGHT = null
+JUMP = null
+CROUCH = null
+SPRINT = null
+PAUSE = null
+walk_back_speed = null
+walk_speed = null
+sprint_speed = null
+crouch_speed = null
+jump_height = null
+acceleration = null
+arm_length = null
+regular_climb_speed = null
+fast_climb_speed = null
+camera_sensitivity = null
+camera_start_deadzone = null
+camera_end_deadzone = null
+allow_jump = null
+allow_crouch = null
+allow_sprint = null
+allow_climb = null
 
 [node name="Obstacles" type="Node" parent="."]
 

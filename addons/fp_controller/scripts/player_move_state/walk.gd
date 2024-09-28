@@ -38,7 +38,10 @@ func physics_update(_delta: float) -> void:
 	if Input.is_action_pressed(player.MOVE_BACK):
 		move_speed = player.walk_back_speed
 	else:
-		move_speed = player.walk_speed
+		if player.movement_strength == 0:
+			move_speed = player.walk_speed
+		else:
+			move_speed = player.walk_speed * player.movement_strength
 	
 	if direction:
 		player.velocity.x = direction.x * move_speed

@@ -23,7 +23,9 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var regular_climb_speed: float = 6.0
 @export var fast_climb_speed: float = 8.0
 @export_range(0.0, 1.0) var view_bobbing_amount: float
-@export_range(1, 100) var camera_sensitivity: int
+@export_range(1.0, 10.0) var camera_sensitivity: float
+@export_range(0.0, 0.5) var camera_start_deadzone: float
+@export_range(0.0, 0.5) var camera_end_deadzone: float
 
 @export_group("Feature toggles")
 @export var allow_jump: bool = true
@@ -59,6 +61,7 @@ var input_direction: Vector2
 var ledge_position: Vector3 = Vector3.ZERO
 var mouse_motion: Vector2
 var default_view_bobbing_amount: float
+var movement_strength: float
 
 # Player state values that are set by applying state
 var climb_speed: float = fast_climb_speed
@@ -129,6 +132,9 @@ func _physics_process(delta: float) -> void:
 			input_direction = Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_FORWARD, MOVE_BACK)
 		elif Input.get_connected_joypads().size() != 0:
 			input_direction = Vector2(Input.get_joy_axis(0, JOY_AXIS_LEFT_X), Input.get_joy_axis(0, JOY_AXIS_LEFT_Y))
+			var x = Input.get_joy_axis(0, JOY_AXIS_LEFT_X)
+			var y = Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
+			movement_strength = Vector2(x, y).length()
 		else:
 			input_direction = Vector2.ZERO
 	
@@ -164,15 +170,34 @@ func _handle_camera_motion() -> void:
 	
 	mouse_motion = Vector2.ZERO
 
-## TODO: fix camera movement with controller
+
 func _handle_joy_camera_motion() -> void:
 	var x_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	
+	if abs(x_axis) < camera_start_deadzone:
+		x_axis = 0
+	if abs(x_axis) > 1 - camera_end_deadzone:
+		if x_axis < 0:
+			x_axis = camera_end_deadzone - 1
+		else:
+			x_axis = 1 - camera_end_deadzone
+	
 	var y_axis = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	
+	if abs(y_axis) < camera_start_deadzone:
+		y_axis = 0
+	if abs(y_axis) > 1 - camera_end_deadzone:
+		if y_axis < 0:
+			y_axis = camera_end_deadzone - 1
+		else:
+			y_axis = 1 - camera_end_deadzone
+	
 	var resulting_vector = Vector2(x_axis, y_axis)
 	var normalized_resulting_vector = resulting_vector.normalized()
+	var action_strength = resulting_vector.length()
 	
-	rotate_y(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.x))
-	camera_pivot.rotate_x(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.y))
+	rotate_y(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.x * action_strength))
+	camera_pivot.rotate_x(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.y * action_strength))
 	
 	camera_pivot.rotation_degrees.x = clampf(
 		camera_pivot.rotation_degrees.x , -89.0, 89.0
