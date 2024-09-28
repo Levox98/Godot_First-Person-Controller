@@ -35,7 +35,7 @@ func physics_update(_delta: float) -> void:
 	input_dir = player.input_direction
 	var direction := (player.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	if Input.is_action_pressed(player.MOVE_BACK):
+	if input_dir.y > 0:
 		move_speed = player.walk_back_speed
 	else:
 		if player.movement_strength == 0:

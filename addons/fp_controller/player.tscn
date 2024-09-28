@@ -241,31 +241,10 @@ height = 1.8
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_5ras8")
-MOVE_FORWARD = null
-MOVE_BACK = null
-MOVE_LEFT = null
-MOVE_RIGHT = null
-JUMP = null
-CROUCH = null
-SPRINT = null
-PAUSE = null
-walk_back_speed = null
-walk_speed = null
-sprint_speed = null
-crouch_speed = null
-jump_height = null
-acceleration = null
-arm_length = null
-regular_climb_speed = null
-fast_climb_speed = null
 view_bobbing_amount = 1.0
 camera_sensitivity = 1.75
-camera_start_deadzone = 0.211
-camera_end_deadzone = 0.191
-allow_jump = null
-allow_crouch = null
-allow_sprint = null
-allow_climb = null
+camera_start_deadzone = 0.2
+camera_end_deadzone = 0.1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true
