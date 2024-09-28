@@ -22,10 +22,10 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var arm_length: float = 0.5
 @export var regular_climb_speed: float = 6.0
 @export var fast_climb_speed: float = 8.0
-@export_range(0.0, 1.0) var view_bobbing_amount: float
-@export_range(1.0, 10.0) var camera_sensitivity: float
-@export_range(0.0, 0.5) var camera_start_deadzone: float
-@export_range(0.0, 0.5) var camera_end_deadzone: float
+@export_range(0.0, 1.0) var view_bobbing_amount: float = 1.0
+@export_range(1.0, 10.0) var camera_sensitivity: float = 2.0
+@export_range(0.0, 0.5) var camera_start_deadzone: float = .2
+@export_range(0.0, 0.5) var camera_end_deadzone: float = .1
 
 @export_group("Feature toggles")
 @export var allow_jump: bool = true
@@ -102,18 +102,24 @@ func check_controls() -> void:
 	if !InputMap.has_action(JUMP):
 		push_error("No control mapped for 'jump', using default...")
 		_add_input_map_event(JUMP, KEY_SPACE)
-		_add_joy_button_event(JUMP, JOY_BUTTON_A)
 	if !InputMap.has_action(CROUCH):
 		push_error("No control mapped for 'crouch', using default...")
 		_add_input_map_event(CROUCH, KEY_C)
-		_add_joy_button_event(CROUCH, JOY_BUTTON_B)
 	if !InputMap.has_action(SPRINT):
 		push_error("No control mapped for 'sprint', using default...")
 		_add_input_map_event(SPRINT, KEY_SHIFT)
-		_add_joy_button_event(SPRINT, JOY_BUTTON_LEFT_STICK)
 	if !InputMap.has_action(PAUSE):
 		push_error("No control mapped for 'pause', using default...")
 		_add_input_map_event(PAUSE, KEY_ESCAPE)
+	
+	# Checking if controller inputs are mapped
+	if InputMap.action_get_events(CROUCH).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(CROUCH, JOY_BUTTON_B)
+	if InputMap.action_get_events(JUMP).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(JUMP, JOY_BUTTON_A)
+	if InputMap.action_get_events(SPRINT).any(func(event): return event is InputEventJoypadButton) == false:
+		_add_joy_button_event(SPRINT, JOY_BUTTON_LEFT_STICK)
+	if InputMap.action_get_events(PAUSE).any(func(event): return event is InputEventJoypadButton) == false:
 		_add_joy_button_event(PAUSE, JOY_BUTTON_START)
 
 
@@ -195,7 +201,7 @@ func _handle_joy_camera_motion() -> void:
 	var resulting_vector = Vector2(x_axis, y_axis)
 	var normalized_resulting_vector = resulting_vector.normalized()
 	var action_strength = resulting_vector.length()
-	
+	print(camera_sensitivity)
 	rotate_y(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.x * action_strength))
 	camera_pivot.rotate_x(-deg_to_rad(camera_sensitivity * normalized_resulting_vector.y * action_strength))
 	
