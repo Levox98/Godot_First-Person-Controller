@@ -13,3 +13,9 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Jolt
+godot-jolt
+
+# VSCode
+.vscode
