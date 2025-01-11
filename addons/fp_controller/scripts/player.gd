@@ -167,8 +167,8 @@ func _process(_delta: float):
 
 
 func _handle_camera_motion() -> void:
-	rotate_y(mouse_motion.x)
-	camera_pivot.rotate_x(mouse_motion.y)
+	rotate_y(mouse_motion.x * camera_sensitivity)
+	camera_pivot.rotate_x(mouse_motion.y  * camera_sensitivity)
 	
 	camera_pivot.rotation_degrees.x = clampf(
 		camera_pivot.rotation_degrees.x , -89.0, 89.0
