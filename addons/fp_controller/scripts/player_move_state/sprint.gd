@@ -25,6 +25,9 @@ func handle_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed(player.CROUCH) && player.allow_crouch:
 		player.view_bobbing_amount = player.default_view_bobbing_amount
 		state_machine.transition_to(state_machine.movement_state[state_machine.SLIDE])
+	
+	if Input.is_action_just_pressed(player.SPRINT):
+		state_machine.transition_to(state_machine.movement_state[state_machine.WALK])
 
 
 func physics_update(_delta: float) -> void:
